@@ -1,0 +1,23 @@
+﻿CREATE TABLE [dbo].[SeatType]
+(
+	SeatId INT PRIMARY KEY NOT NULL IDENTITY(200,1),
+	SeatName varchar(20) NOT NULL
+)
+CREATE TABLE [dbo].[Passenger]
+(
+	PassengerId INT PRIMARY KEY NOT NULL IDENTITY(200,1),
+	PassengerName varchar(30) NOT NULL,
+	BookingDate DateTime NOT NULL,
+	IsTransit BIT NOT NULL,
+	MobileNo char(11) NOT NULL,
+	BasicPrice Decimal NOT NULL,
+	ImageUrl varchar(200) NULL,
+	SeatId INT NOT NULL REFERENCES SeatType(SeatId) ON DELETE CASCADE
+)
+CREATE TABLE [dbo].[SeatFacility]
+(
+	FacilityId INT PRIMARY KEY NOT NULL IDENTITY(300,1),
+	FacilityName varchar(20) NOT NULL,
+	Price Decimal NOT NULL,
+	PassengerId INT NOT NULL REFERENCES Passenger(PassengerId) ON DELETE CASCADE
+)

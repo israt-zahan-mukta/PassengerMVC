@@ -1,0 +1,157 @@
+﻿@model PassengerMVC.ViewModels.PassengerViewModel
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="d-flex justify-content-center align-items-center my-4">
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-dark text-light"><h2>Edit Passenger</h2></div>
+            <div class="card-body">
+                @using (Ajax.BeginForm("Edit", "Passengers", new AjaxOptions { HttpMethod = "POST", OnBegin = "onBeginSubmit", OnSuccess = "onSuccess", OnFailure = "onFailure" }, new { enctype = "multipart/form-data", id = "passengerForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.PassengerId)
+                    <input type="hidden" name="OldImageUrl" value="@Model.ImageUrl" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Passenger Info</h4>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.PassengerName, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.PassengerName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.PassengerName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.BookingDate, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.BookingDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.BookingDate, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.MobileNo, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.MobileNo, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.SeatId, htmlAttributes: new { @class = "form-label" })
+                                @Html.DropDownList("SeatId", null, "--Select Seat Type--", new { @class = "form-select" })
+                                @Html.ValidationMessageFor(model => model.SeatId, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.BasicPrice, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.BasicPrice, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.BasicPrice, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.CheckBoxFor(model => model.IsTransit, new { @class = "form-check-input" })
+                                @Html.LabelFor(model => model.IsTransit, htmlAttributes: new { @class = "form-label" })
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-sm-4">
+                                        <img id="imgPreview" src="@(string.IsNullOrEmpty(Model.ImageUrl) ? Url.Content("~/images/no-image.png") : Url.Content(Model.ImageUrl))" class="img-thumbnail" style="width: 90px; height: 90px" />
+                                        <label for="img" class="form-label fw-bold">Upload Image</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input style="display: none" id="img" name="ProfileFile" type="file" class="form-control" accept="image/*" onchange="showImagePreview(this)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Facility Info</h4>
+                            <button type="button" class="btn btn-primary mb-3" onclick="AddFacility()">Add Facility</button>
+
+                            <div id="modulesContainer">
+                                @Html.Partial("~/Views/Shared/_SeatFacilities.cshtml", Model.SeatFacilities ?? new List<PassengerMVC.Models.SeatFacility>())
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-3 gap-2">
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">Back To List</a>
+                            <button id="btnSubmit" type="submit" class="btn btn-success">Save Changes</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    // Show Image
+    function showImagePreview(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imgPreview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Add new Module
+    function AddFacility() {
+        var $body = $("#facilitiesTable tbody");
+        var index = $body.find("tr").length;
+        var newRow = `<tr>
+        <td>
+            <input type="hidden" name="SeatFacilities[${index}].FacilityId" value="0" />
+            <input name="SeatFacilities[${index}].FacilityName"/>
+        </td>
+        <td>
+            <input name="SeatFacilities[${index}].Price"/>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger removeFacilityBtn">Remove</button>
+        </td>
+        </tr>`;
+        $body.append(newRow);
+    }
+
+    // Remove module from Modules Table
+    $(document).ready(function () {
+        $(document).on('click', ".removeFacilityBtn", function () {
+            $(this).closest("tr").remove();
+            reIndexTableRows();
+        })
+
+        function reIndexTableRows() {
+            $("#facilitiesTable tbody tr").each(function (rowIndex, trElement) {
+                $(trElement).files("input").each(function () {
+                    var currentName = $(this).attr("name");
+
+                    if (currentName) {
+                        var calculateName = currentName.replace(/\[\d+\]/, '[' + rowIndex + ']');
+                        $(this).attr("name", calculateName);
+                    }
+                })
+            })
+        }
+    });
+
+    function onBeginSubmit(xhr, settings) {
+        var form = $('#passengerForm');
+        $("#btnSubmit").prop('disabled', true).text("Saving....");
+
+        var formData = new FormData(form[0]);
+        settings.processData = false;
+        settings.contentType = false;
+    }
+
+    function onSuccess(response) {
+        alert("Data saved Successfully");
+        window.location.href = "/Passengers/Index";
+    }
+
+    function onFailure(xhr) {
+        alert("Error occured. Status code: " + xhr.status);
+    }
+</script>

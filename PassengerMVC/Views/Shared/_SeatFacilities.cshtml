@@ -1,0 +1,30 @@
+﻿@model List<PassengerMVC.Models.SeatFacility>
+<table class="table table-bordered" id="facilitiesTable">
+    <thead>
+        <tr>
+            <th>Facility Name</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model!=null && Model.Count>0)
+        {
+            for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" name="SeatFacilities[@i].FacilityId" value="0" />
+                        <input name="SeatFacilities[@i].FacilityName" value="@Model[i].FacilityName" />
+                    </td>
+                    <td>
+                        <input name="SeatFacilities[@i].Price" value="@Model[i].Price" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger removeFacilityBtn">Remove</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

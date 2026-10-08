@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="PassengerDatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Passenger">
+          <Key>
+            <PropertyRef Name="PassengerId" />
+          </Key>
+          <Property Name="PassengerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PassengerName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="BookingDate" Type="datetime" Nullable="false" />
+          <Property Name="IsTransit" Type="bit" Nullable="false" />
+          <Property Name="MobileNo" Type="char" MaxLength="11" Nullable="false" />
+          <Property Name="BasicPrice" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="SeatId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SeatFacility">
+          <Key>
+            <PropertyRef Name="FacilityId" />
+          </Key>
+          <Property Name="FacilityId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FacilityName" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="PassengerId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SeatType">
+          <Key>
+            <PropertyRef Name="SeatId" />
+          </Key>
+          <Property Name="SeatId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SeatName" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__Passenger__SeatI__38996AB5">
+          <End Role="SeatType" Type="Self.SeatType" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SeatType">
+              <PropertyRef Name="SeatId" />
+            </Principal>
+            <Dependent Role="Passenger">
+              <PropertyRef Name="SeatId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SeatFacil__Passe__3B75D760">
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SeatFacility" Type="Self.SeatFacility" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Passenger">
+              <PropertyRef Name="PassengerId" />
+            </Principal>
+            <Dependent Role="SeatFacility">
+              <PropertyRef Name="PassengerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PassengerDatabaseModelStoreContainer">
+          <EntitySet Name="Passenger" EntityType="Self.Passenger" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SeatFacility" EntityType="Self.SeatFacility" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SeatType" EntityType="Self.SeatType" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Passenger__SeatI__38996AB5" Association="Self.FK__Passenger__SeatI__38996AB5">
+            <End Role="SeatType" EntitySet="SeatType" />
+            <End Role="Passenger" EntitySet="Passenger" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SeatFacil__Passe__3B75D760" Association="Self.FK__SeatFacil__Passe__3B75D760">
+            <End Role="Passenger" EntitySet="Passenger" />
+            <End Role="SeatFacility" EntitySet="SeatFacility" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PassengerDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Passenger">
+          <Key>
+            <PropertyRef Name="PassengerId" />
+          </Key>
+          <Property Name="PassengerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PassengerName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BookingDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsTransit" Type="Boolean" Nullable="false" />
+          <Property Name="MobileNo" Type="String" MaxLength="11" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="BasicPrice" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="SeatId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="SeatType" Relationship="Self.FK__Passenger__SeatI__38996AB5" FromRole="Passenger" ToRole="SeatType" />
+          <NavigationProperty Name="SeatFacilities" Relationship="Self.FK__SeatFacil__Passe__3B75D760" FromRole="Passenger" ToRole="SeatFacility" />
+        </EntityType>
+        <EntityType Name="SeatFacility">
+          <Key>
+            <PropertyRef Name="FacilityId" />
+          </Key>
+          <Property Name="FacilityId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FacilityName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="PassengerId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Passenger" Relationship="Self.FK__SeatFacil__Passe__3B75D760" FromRole="SeatFacility" ToRole="Passenger" />
+        </EntityType>
+        <EntityType Name="SeatType">
+          <Key>
+            <PropertyRef Name="SeatId" />
+          </Key>
+          <Property Name="SeatId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SeatName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Passengers" Relationship="Self.FK__Passenger__SeatI__38996AB5" FromRole="SeatType" ToRole="Passenger" />
+        </EntityType>
+        <Association Name="FK__Passenger__SeatI__38996AB5">
+          <End Role="SeatType" Type="Self.SeatType" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SeatType">
+              <PropertyRef Name="SeatId" />
+            </Principal>
+            <Dependent Role="Passenger">
+              <PropertyRef Name="SeatId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SeatFacil__Passe__3B75D760">
+          <End Role="Passenger" Type="Self.Passenger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SeatFacility" Type="Self.SeatFacility" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Passenger">
+              <PropertyRef Name="PassengerId" />
+            </Principal>
+            <Dependent Role="SeatFacility">
+              <PropertyRef Name="PassengerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PassengerDatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Passengers" EntityType="Self.Passenger" />
+          <EntitySet Name="SeatFacilities" EntityType="Self.SeatFacility" />
+          <EntitySet Name="SeatTypes" EntityType="Self.SeatType" />
+          <AssociationSet Name="FK__Passenger__SeatI__38996AB5" Association="Self.FK__Passenger__SeatI__38996AB5">
+            <End Role="SeatType" EntitySet="SeatTypes" />
+            <End Role="Passenger" EntitySet="Passengers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SeatFacil__Passe__3B75D760" Association="Self.FK__SeatFacil__Passe__3B75D760">
+            <End Role="Passenger" EntitySet="Passengers" />
+            <End Role="SeatFacility" EntitySet="SeatFacilities" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PassengerDatabaseModelStoreContainer" CdmEntityContainer="PassengerDatabaseEntities">
+          <EntitySetMapping Name="Passengers">
+            <EntityTypeMapping TypeName="PassengerDatabaseModel.Passenger">
+              <MappingFragment StoreEntitySet="Passenger">
+                <ScalarProperty Name="PassengerId" ColumnName="PassengerId" />
+                <ScalarProperty Name="PassengerName" ColumnName="PassengerName" />
+                <ScalarProperty Name="BookingDate" ColumnName="BookingDate" />
+                <ScalarProperty Name="IsTransit" ColumnName="IsTransit" />
+                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
+                <ScalarProperty Name="BasicPrice" ColumnName="BasicPrice" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="SeatId" ColumnName="SeatId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SeatFacilities">
+            <EntityTypeMapping TypeName="PassengerDatabaseModel.SeatFacility">
+              <MappingFragment StoreEntitySet="SeatFacility">
+                <ScalarProperty Name="FacilityId" ColumnName="FacilityId" />
+                <ScalarProperty Name="FacilityName" ColumnName="FacilityName" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PassengerId" ColumnName="PassengerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SeatTypes">
+            <EntityTypeMapping TypeName="PassengerDatabaseModel.SeatType">
+              <MappingFragment StoreEntitySet="SeatType">
+                <ScalarProperty Name="SeatId" ColumnName="SeatId" />
+                <ScalarProperty Name="SeatName" ColumnName="SeatName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

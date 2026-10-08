@@ -1,0 +1,71 @@
+﻿@model IEnumerable<PassengerMVC.Models.Passenger>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Passenger List</h2>
+<div class="d-flex justify-content-end mb-3"  >
+    <a class="btn btn-success" href="@Url.Action("Create")">Add New Passenger</a>
+</div>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Passenger Info</th>
+            <th>Seat Type</th>
+            <th>Seat Facilities</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(p.ImageUrl))
+                    {
+                        <img src="@p.ImageUrl" class="img-thumbnail" style="max-height:80px;max-width:80px" />
+                    }
+                </td>
+                <td>
+                    <strong>Name: </strong>@p.PassengerName<br />
+                    <strong>Mobile No: </strong>@p.MobileNo<br />
+                    <strong>Booking Date: </strong>@p.BookingDate.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    <strong>Seat Name: </strong>@p.SeatType.SeatName<br />
+                    <strong>Ticket Price: </strong>@p.BasicPrice.ToString("C")<br />
+                    <strong>Status: </strong>@(p.IsTransit?"Transit" : "Not Transit")
+                </td>
+                <td>
+                    @if(p.SeatFacilities!=null && p.SeatFacilities.Any())
+                {
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Facility Name</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var f in p.SeatFacilities)
+                    {
+                        <tr>
+                            <td>@f.FacilityName</td>
+                            <td>@f.Price</td>
+                        </tr>
+                    }
+                        </tbody>
+                    </table>
+                }
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", new {id=p.PassengerId})" class="btn btn-success">Edit</a>
+                    <a onclick="return confirm('Are you sure to delte this record?')" href="@Url.Action("Delete", new {id=p.PassengerId})" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
